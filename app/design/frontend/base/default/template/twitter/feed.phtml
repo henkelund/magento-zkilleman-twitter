@@ -1,0 +1,120 @@
+<?php
+/**
+ * Zkilleman_Twitter
+ *
+ * Copyright (C) 2011 Henrik Hedelund (henke.hedelund@gmail.com)
+ *
+ * This file is part of Zkilleman_Twitter.
+ *
+ * Zkilleman_Twitter is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Zkilleman_Twitter is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Zkilleman_Twitter.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP Version 5.1
+ *
+ * @category  Zkilleman
+ * @package   Zkilleman_Twitter
+ * @author    Henrik Hedelund <henke.hedelund@gmail.com>
+ * @copyright 2011 Henrik Hedelund (henke.hedelund@gmail.com)
+ * @license   http://www.gnu.org/licenses/lgpl.html GNU LGPL
+ * @link      https://github.com/henkelund/magento-zkilleman-twitter
+ */
+
+
+/**
+ * Template for feed block
+ * 
+ * @see Zkilleman_Twitter_Block_Feed
+ */
+?>
+<div id="block<?php echo $this->getFeedIdentifier(); ?>" class="block block-twitter-feed<?php if ($this->getTweets()->count() == 0): ?> empty<?php endif; ?>">
+    <div class="block-title">
+        <strong>
+            <span>
+                <?php if ($this->getHashTag()): ?>
+                    <?php echo $this->getHashTag(); ?>
+                <?php else: ?>
+                    Twitter
+                <?php endif; ?>
+            </span>
+        </strong>
+    </div>
+    <div class="block-content">
+        <ul id="list<?php echo $this->getFeedIdentifier(); ?>">
+        <?php foreach ($this->getTweets() as $tweet): ?>
+            <li>
+                <a href="http://twitter.com/<?php echo $tweet->getFromUser(); ?>">
+                    <img src="<?php echo $tweet->getProfileImageUrl(); ?>" alt="@<?php echo $tweet->getFromUser(); ?>" title="@<?php echo $tweet->getFromUser(); ?>" />
+                </a>
+                <p>
+                    <a href="http://twitter.com/<?php echo $tweet->getFromUser(); ?>/status/<?php echo $tweet->getIdStr(); ?>">
+                        <?php echo $tweet->getText(); ?>
+                    </a>
+                </p>
+            </li>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
+
+<?php if ($this->shouldRequestTweets()): ?>
+<script type="text/javascript">
+//<![CDATA[
+    document.observe("dom:loaded", function() {
+        var list = $('list<?php echo $this->getFeedIdentifier(); ?>');
+        var maxLength = <?php echo (int) $this->getMaxLength(); ?>;
+        var url = '<?php echo $this->getUrl('twitter/ajax/requestTweets', array('searchTerm' => urlencode($this->getSearchTerm()))); ?>';
+        new Ajax.Request(url, {
+            method: 'get',
+            onSuccess: function(transport) {
+                var tweets = transport.responseJSON;
+                if (tweets && tweets.length > 0) {
+                    for (var i = tweets.length - 1; i >= 0; --i) {
+                        var tweet = tweets[i];
+
+                        var tweetElem = new Element('li')
+                            .update(
+                                new Element('a', {
+                                    href: 'http://twitter.com/' + tweet.from_user
+                                }).update(
+                                    new Element('img', {
+                                        src: tweet.profile_image_url,
+                                        alt: '@' + tweet.from_user,
+                                        title: '@' + tweet.from_user
+                                    })
+                                ).insert(
+                                    new Element('p').update(
+                                        new Element('a', {
+                                            href: 'http://twitter.com/' +
+                                                tweet.from_user + '/' +
+                                                tweet.id_str
+                                        }).update(tweet.text)
+                                    )
+                                )
+                            );
+
+                        list.insert({top: tweetElem});
+                        while (list.childElements().length > maxLength) {
+                            list.childElements()[list.childElements().length - 1].remove();
+                        }
+                    }
+
+                    if (!list.empty()) {
+                        $('block<?php echo $this->getFeedIdentifier(); ?>').removeClassName('empty');
+                    }
+                }
+            }
+        });
+    });
+//]]>
+</script>
+<?php endif; ?>

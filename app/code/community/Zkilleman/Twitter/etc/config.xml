@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Zkilleman_Twitter
+ *
+ * Copyright (C) 2011 Henrik Hedelund (henke.hedelund@gmail.com)
+ *
+ * This file is part of Zkilleman_Twitter.
+ *
+ * Zkilleman_Twitter is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Zkilleman_Twitter is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Zkilleman_Twitter.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP Version 5.1
+ *
+ * @category  Zkilleman
+ * @package   Zkilleman_Twitter
+ * @author    Henrik Hedelund <henke.hedelund@gmail.com>
+ * @copyright 2011 Henrik Hedelund (henke.hedelund@gmail.com)
+ * @license   http://www.gnu.org/licenses/lgpl.html GNU LGPL
+ * @link      https://github.com/henkelund/magento-zkilleman-twitter
+ */
+-->
+<config>
+    <modules>
+        <Zkilleman_Twitter>
+            <version>0.1.0</version>
+        </Zkilleman_Twitter>
+    </modules>
+
+    <frontend>
+        <routers>
+            <twitter>
+                <use>standard</use>
+                <args>
+                    <module>Zkilleman_Twitter</module>
+                    <frontName>zkilleman-twitter</frontName>
+                </args>
+            </twitter>
+        </routers>
+        <layout>
+            <updates>
+                <twitter>
+                    <file>twitter.xml</file>
+                </twitter>
+            </updates>
+        </layout>
+    </frontend>
+
+    <global>
+        <models>
+            <twitter>
+                <class>Zkilleman_Twitter_Model</class>
+                <resourceModel>twitter_mysql4</resourceModel>
+            </twitter>
+            <twitter_mysql4>
+                <class>Zkilleman_Twitter_Model_Mysql4</class>
+                <entities>
+                    <tweet>
+                        <table>zkilleman_tweet</table>
+                    </tweet>
+                </entities>
+            </twitter_mysql4>
+        </models>
+        <resources>
+            <twitter_setup>
+                <setup>
+                    <module>Zkilleman_Twitter</module>
+                </setup>
+            </twitter_setup>
+        </resources>
+        <blocks>
+            <twitter><class>Zkilleman_Twitter_Block</class></twitter>
+        </blocks>
+        <helpers>
+            <twitter>
+                <class>Zkilleman_Twitter_Helper</class>
+            </twitter>
+        </helpers>
+    </global>
+
+    <default>
+        <twitter>
+            <general>
+                <service_url><![CDATA[http://search.twitter.com/search.json]]></service_url>
+                <search_term><![CDATA[#magento OR @magento OR from:magento]]></search_term>
+                <lifetime_days>30</lifetime_days>
+                <hashtag_prefix>magento</hashtag_prefix>
+                <update_interval>300</update_interval>
+                <product_hashtag>1</product_hashtag>
+            </general>
+        </twitter>
+    </default>
+
+    <crontab>
+        <jobs>
+            <twitter_fetch_tweets>
+                <schedule><cron_expr>*/5 * * * *</cron_expr></schedule>
+                <run><model>twitter/observer::fetchTweets</model></run>
+            </twitter_fetch_tweets>
+        </jobs>
+    </crontab>
+</config>

@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config>
+    <modules>
+        <Zkilleman_Twitter>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Zkilleman_Twitter>
+    </modules>
+</config>
