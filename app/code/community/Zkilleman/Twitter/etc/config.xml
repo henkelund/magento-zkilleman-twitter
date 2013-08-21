@@ -91,7 +91,8 @@
     <default>
         <twitter>
             <general>
-                <service_url><![CDATA[http://search.twitter.com/search.json]]></service_url>
+                <consumer_key></consumer_key>
+                <consumer_secret></consumer_secret>
                 <search_term><![CDATA[#magento OR @magento OR from:magento]]></search_term>
                 <lifetime_days>30</lifetime_days>
                 <hashtag_prefix>magento</hashtag_prefix>

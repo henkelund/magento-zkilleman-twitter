@@ -55,66 +55,76 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <service_url translate="label" module="twitter">
-                            <label>Service url</label>
+                        <consumer_key translate="label" module="twitter">
+                            <label>Consumer Key</label>
                             <frontend_type>text</frontend_type>
+                            <comment><![CDATA[Your Twitter application consumer key.]]></comment>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </service_url>
-                        <search_term translate="label" module="twitter">
-                            <label>Search term</label>
+                        </consumer_key>
+                        <consumer_secret translate="label" module="twitter">
+                            <label>Consumer Secret</label>
                             <frontend_type>text</frontend_type>
+                            <comment><![CDATA[Your Twitter application consumer secret.]]></comment>
                             <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </consumer_secret>
+                        <search_term translate="label" module="twitter">
+                            <label>Search Term</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </search_term>
                         <lifetime_days translate="label comment" module="twitter">
-                            <label>History lifetime</label>
+                            <label>History Lifetime</label>
                             <frontend_type>text</frontend_type>
                             <validate>validate-number</validate>
                             <comment><![CDATA[Lifetime in days. Set to '0' or leave blank to never clean history. This feature requires a properly configured cron routine.]]></comment>
-                            <sort_order>30</sort_order>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </lifetime_days>
                         <update_interval translate="label comment" module="twitter">
-                            <label>Update interval</label>
+                            <label>Update Interval</label>
                             <frontend_type>text</frontend_type>
                             <validate>validate-number</validate>
                             <comment><![CDATA[The feed widget update interval in seconds. Could be set to 0 to refresh on each page load but you should be nice to twitter. If you change this value, a Block Cache refresh is needed aswell.]]></comment>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </update_interval>
                         <product_hashtag translate="label comment" module="twitter">
-                            <label>Product hashtag</label>
+                            <label>Product Hashtag</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <comment><![CDATA[Wheter to use product specific search term when available.]]></comment>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </product_hashtag>
                         <hashtag_prefix translate="label comment" module="twitter">
-                            <label>Hashtag prefix</label>
+                            <label>Hashtag Prefix</label>
                             <frontend_type>text</frontend_type>
                             <comment><![CDATA[Only applicable if &quot;Product hashtag&quot; is set to &quot;Yes&quot;.]]></comment>
-                            <sort_order>60</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </hashtag_prefix>
                         <show_retweets translate="label comment" module="twitter">
-                            <label>Show retweets</label>
+                            <label>Show Retweets</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>70</sort_order>
+                            <sort_order>80</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

@@ -45,7 +45,6 @@ class Zkilleman_Twitter_AjaxController extends Mage_Core_Controller_Front_Action
     public function requestTweetsAction()
     {
         $searchTerm = $this->getRequest()->getParam('searchTerm');
-        $tweetArray = array();
 
         $newTweets = Mage::getModel('twitter/tweet')->requestTweets($searchTerm);
         if ($newTweets->count() > 0) {

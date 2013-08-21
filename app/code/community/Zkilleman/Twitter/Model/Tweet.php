@@ -49,6 +49,15 @@ class Zkilleman_Twitter_Model_Tweet extends Mage_Core_Model_Abstract
     }
 
     /**
+     *
+     * @return Zkilleman_Twitter_Model_Config
+     */
+    protected function _getConfig()
+    {
+        return Mage::getSingleton('twitter/config');
+    }
+
+    /**
      * Serialize complex types before save
      */
     protected function _beforeSave()
@@ -69,6 +78,63 @@ class Zkilleman_Twitter_Model_Tweet extends Mage_Core_Model_Abstract
     }
 
     /**
+     *
+     * @param  array $params
+     * @return boolean|array
+     */
+    protected function _getSearchResult($params = array())
+    {
+        $client = new Zend_Http_Client(
+                        $this->_getConfig()->getApiUrl('1.1/search/tweets.json'));
+        if ($token = $this->_getConfig()->getBearerToken()) {
+            $client->setHeaders('Authorization', sprintf('Bearer %s', $token));
+        }
+        $client->setParameterGet($params);
+        $response = $client->request(Zend_Http_Client::GET);
+        if (!$response->isSuccessful()) {
+            return false;
+        }
+        $body = Mage::helper('core')->jsonDecode($response->getBody());
+        if (!is_array($body) ||
+                !isset($body['statuses']) ||
+                !is_array($body['statuses'])) {
+            return false;
+        }
+        return $body;
+    }
+
+    /**
+     * Downgrades API v1.1 result format to v1.0
+     * for database structure compatibility.
+     *
+     * @param  array $apiData
+     * @return array
+     */
+    protected function _prepareApiData($apiData)
+    {
+        $data = array();
+
+        $commonKeys = array(
+            'created_at', 'id_str', 'text', 'metadata', 'id', 'geo', 'source');
+        foreach ($commonKeys as $key) {
+            $data[$key] = $apiData[$key];
+        }
+
+        $data = array_merge($data, array(
+            'profile_image_url' => $apiData['user']['profile_image_url'],
+            'from_user_id_str'  => $apiData['user']['id_str'],
+            'from_user'         => $apiData['user']['screen_name'],
+            'to_user_id'        => $apiData['in_reply_to_user_id'],
+            'from_user_id'      => $apiData['user']['id'],
+            'iso_language_code' => $apiData['metadata']['iso_language_code'],
+            'to_user_id_str'    => $apiData['in_reply_to_user_id_str']
+        ));
+        unset($data['metadata']['iso_language_code']);
+
+        return $data;
+    }
+
+    /**
      * Request new messages from the Twitter Search API
      * https://dev.twitter.com/docs/api/1/get/search
      *
@@ -79,32 +145,27 @@ class Zkilleman_Twitter_Model_Tweet extends Mage_Core_Model_Abstract
     {
         $tweets = new Varien_Data_Collection();
 
-        $serviceUrl = Mage::getStoreConfig(self::CONFIG_SERVICE_URL);
-        $serviceParams = array(
-            'q'             => $searchTerm,
-            'result_type'   => 'recent',
-            'since_id'      => $this->_getMostRecentId($searchTerm)
-        );
-        $serviceUrl .= '?' . http_build_query($serviceParams);
-        $response = Mage::helper('core')
-            ->jsonDecode(file_get_contents($serviceUrl));
+        $searchResult = $this->_getSearchResult(array(
+            'q'           => $searchTerm,
+            'result_type' => 'recent',
+            'since_id'    => $this->_getMostRecentId($searchTerm)
+        ));
 
-        if (is_array($response) && isset($response['results']) &&
-                is_array($response['results'])) {
+        if ($searchResult) {
+            foreach ($searchResult['statuses'] as $status) {
 
-            foreach ($response['results'] as $item) {
-
-                if (is_array($item)) {
-
-                    $tweet = Mage::getModel('twitter/tweet', $item);
-                    $tweet->setCreatedAt(
-                        date('Y-m-d H:i:s',
-                                strtotime($tweet->getCreatedAt())
-                        )
-                    )->setSearchTerm($searchTerm);
-                    $tweets->addItem($tweet);
-
+                $item = @$this->_prepareApiData($status);
+                if (!is_array($item)) {
+                    continue;
                 }
+
+                $tweet = Mage::getModel('twitter/tweet', $item);
+                $tweet->setCreatedAt(
+                    date('Y-m-d H:i:s',
+                            strtotime($tweet->getCreatedAt())
+                    )
+                )->setSearchTerm($searchTerm);
+                $tweets->addItem($tweet);
             }
         }
 
