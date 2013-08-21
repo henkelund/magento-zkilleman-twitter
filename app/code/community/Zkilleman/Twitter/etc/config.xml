@@ -33,7 +33,7 @@
 <config>
     <modules>
         <Zkilleman_Twitter>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
         </Zkilleman_Twitter>
     </modules>
 
@@ -55,6 +55,28 @@
             </updates>
         </layout>
     </frontend>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Zkilleman_Twitter before="Mage_Adminhtml">Zkilleman_Twitter_Adminhtml</Zkilleman_Twitter>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <adminhtml>
+        <layout>
+            <updates>
+                <twitter>
+                    <file>twitter.xml</file>
+                </twitter>
+            </updates>
+        </layout>
+    </adminhtml>
 
     <global>
         <models>

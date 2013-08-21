@@ -53,7 +53,7 @@ class Zkilleman_Twitter_Block_Feed extends Mage_Core_Block_Template
      * @var Zkilleman_Twitter_Model_Mysql4_Tweet_Collection
      */
     protected $_tweets = null;
-    
+
     /**
      * Returns a collection of tweets. Should not be called before applying
      * a hash tag to this block because the collection will be cached and the
@@ -67,6 +67,7 @@ class Zkilleman_Twitter_Block_Feed extends Mage_Core_Block_Template
             $this->_tweets = Mage::getModel('twitter/tweet')->getCollection();
             $this->_tweets
                 ->addFieldToFilter('search_term', $this->getSearchTerm())
+                ->addFieldToFilter('is_hidden', 0)
                 ->setOrder('id', 'DESC')
                 ->setPageSize((int) $this->getMaxLength());
 
@@ -151,14 +152,14 @@ class Zkilleman_Twitter_Block_Feed extends Mage_Core_Block_Template
 
             $this->setData('should_request_tweets', $shouldRequestTweets);
         }
-        
+
         return (bool) $this->getData('should_request_tweets');
     }
-    
+
     /**
      * Request interval in seconds.
      * Currently hard coded to 5 mins, like the cron job
-     * 
+     *
      * @return int
      */
     protected function _getRequestInterval()
@@ -217,8 +218,8 @@ class Zkilleman_Twitter_Block_Feed extends Mage_Core_Block_Template
     }
 
     /**
-     * Don't bother to cache if we are requesting new tweets (we don't want the 
-     * update javascript to be cached). Otherwise, cache indefinitely. Tweet 
+     * Don't bother to cache if we are requesting new tweets (we don't want the
+     * update javascript to be cached). Otherwise, cache indefinitely. Tweet
      * recievers are responsible for flushing the cache
      *
      * @return mixed

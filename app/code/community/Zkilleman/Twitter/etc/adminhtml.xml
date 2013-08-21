@@ -31,10 +31,29 @@
  */
 -->
 <config>
+    <menu>
+        <cms>
+            <children>
+                <twitter translate="title" module="twitter">
+                    <title>Twitter</title>
+                    <action>adminhtml/twitter</action>
+                    <sort_order>30</sort_order>
+                </twitter>
+            </children>
+        </cms>
+    </menu>
     <acl>
         <resources>
             <admin>
                 <children>
+                    <cms>
+                        <children>
+                            <block translate="title" module="twitter">
+                                <title>Twitter</title>
+                                <sort_order>30</sort_order>
+                            </block>
+                        </children>
+                    </cms>
                     <system>
                         <children>
                             <config>
