@@ -97,6 +97,7 @@
                 <hashtag_prefix>magento</hashtag_prefix>
                 <update_interval>300</update_interval>
                 <product_hashtag>1</product_hashtag>
+                <show_retweets>0</show_retweets>
             </general>
         </twitter>
     </default>

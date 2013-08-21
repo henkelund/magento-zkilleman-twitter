@@ -46,6 +46,7 @@ class Zkilleman_Twitter_Block_Feed extends Mage_Core_Block_Template
     const CONFIG_TAG_PREFIX = 'twitter/general/hashtag_prefix';
     const CONFIG_GENERAL_SEARCH_TERM = 'twitter/general/search_term';
     const CONFIG_UPDATE_INTERVAL = 'twitter/general/update_interval';
+    const CONFIG_SHOW_RETWEETS = 'twitter/general/show_retweets';
 
     /**
      *
@@ -68,6 +69,11 @@ class Zkilleman_Twitter_Block_Feed extends Mage_Core_Block_Template
                 ->addFieldToFilter('search_term', $this->getSearchTerm())
                 ->setOrder('id', 'DESC')
                 ->setPageSize((int) $this->getMaxLength());
+
+            if (!Mage::getStoreConfigFlag(self::CONFIG_SHOW_RETWEETS)) {
+                $this->_tweets
+                            ->addFieldToFilter('text', array('nlike' => 'RT %'));
+            }
         }
         return $this->_tweets;
     }
@@ -85,7 +91,7 @@ class Zkilleman_Twitter_Block_Feed extends Mage_Core_Block_Template
             if (Mage::getStoreConfig(self::CONFIG_USE_PRODUCT_TAG) &&
                     $product = Mage::registry('current_product')) {
 
-                $hashTag = $product->hasData($hashTagKey) ?
+                $hashTag = $product->getData($hashTagKey) ?
                     $product->getData($hashTagKey) :
                     '#' . preg_replace('/[^a-zA-Z0-9]/', '',
                         Mage::getStoreConfig(self::CONFIG_TAG_PREFIX) .
